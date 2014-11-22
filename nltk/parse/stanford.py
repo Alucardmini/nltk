@@ -22,6 +22,8 @@ from nltk.tree import Tree
 
 _stanford_url = 'http://nlp.stanford.edu/software/lex-parser.shtml'
 
+STATE_START, STATE_TAGS, STATE_TREE, STATE_DEPENDENCY = 0, 1, 2, 3
+
 class StanfordParser(ParserI):
     r"""
     Interface to the Stanford Parser
@@ -103,7 +105,8 @@ class StanfordParser(ParserI):
         cur_lines = []
         for line in output_.splitlines(False):
             if line == '':
-                res.append(Tree.fromstring('\n'.join(cur_lines)))
+                #res.append(Tree.fromstring('\n'.join(cur_lines)))
+                res.append(cur_lines)
                 cur_lines = []
             else:
                 cur_lines.append(line)
@@ -138,7 +141,8 @@ class StanfordParser(ParserI):
             'edu.stanford.nlp.parser.lexparser.LexicalizedParser',
             '-model', self.model_path,
             '-sentences', 'newline',
-            '-outputFormat', 'penn',
+            #'-outputFormat', 'penn',
+            '-outputFormat', 'wordsAndTags,penn,typedDependencies',
             '-tokenized',
             '-escaper', 'edu.stanford.nlp.process.PTBEscapingProcessor',
         ]
@@ -171,7 +175,8 @@ class StanfordParser(ParserI):
             'edu.stanford.nlp.parser.lexparser.LexicalizedParser',
             '-model', self.model_path,
             '-sentences', 'newline',
-            '-outputFormat', 'penn',
+            #'-outputFormat', 'penn',
+            '-outputFormat', 'wordsAndTags,penn,typedDependencies',
         ]
         return self._parse_trees_output(self._execute(cmd, '\n'.join(sentences), verbose))
 
